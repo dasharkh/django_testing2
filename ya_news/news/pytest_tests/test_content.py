@@ -10,7 +10,7 @@ pytestmark = pytest.mark.django_db
 def test_news_count_order(client, news_list):
     """Проверка сортировки на главной."""
     response = client.get(URL.home)
-    object_list = response.context['object_list']
+    object_list = list(response.context['object_list'])
     assert object_list == sorted(
         object_list, key=lambda x: x.date, reverse=True
     )
@@ -28,8 +28,7 @@ def test_comments_order(client, news, comments_list):
     response = client.get(URL.detail)
     assert 'news' in response.context
     news = response.context['news']
-    all_comments = news.comment_set.all()
-
+    all_comments = list(news.comment_set.all())
     assert isinstance(all_comments[0].created, timezone.datetime)
     assert all_comments == sorted(all_comments, key=lambda x: x.created)
 
